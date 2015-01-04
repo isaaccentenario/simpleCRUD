@@ -150,3 +150,4 @@ class simpleCRUD {
 
 	}
 }
+ob_end_flush();
