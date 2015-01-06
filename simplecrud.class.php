@@ -11,7 +11,6 @@
 	|	https://bitbucket.org/isaaccentenario					|
 	|															|
 	=============================================================
-	Essa classe foi criada para facilitar o manuseio (CRUD) de bancos de dados sql com PHP (puro, originalmente). 
 */
 ob_start();
 header("content-type:text/html;charset=utf-8");
@@ -33,7 +32,7 @@ class simpleCRUD {
 	public function connect(){
 		$connect = new mysqli($this->host,$this->user,$this->password,$this->db);
 		$this->conn = $connect;
-		echo $connect->error;
+		
 		if( mysqli_connect_errno() )
 		{
 			$this->error_detail = mysqli_connect_errno();
@@ -43,6 +42,10 @@ class simpleCRUD {
 		{
 			return true;
 		}
+
+		$this->conn->set_charset("utf8"); 
+		$this->conn->query("SET NAMES 'utf8'");
+		$this->conn->query("SET GLOBAL sql_mode='' ");
 	}
 
 	public function error() {
@@ -119,8 +122,8 @@ class simpleCRUD {
 		{
 			return false;
 		}
-
 	}
+
 	public function delete( $table = null , $conditions = array() ) {
 
 		if( $table != null && !empty ( $conditions) ) 
@@ -148,6 +151,52 @@ class simpleCRUD {
 			return false;
 		}
 
+	}
+	public function get( $table = null, $conditions = array(), $options = array() ) {
+		$defaults = array(
+				"operator" => "AND",
+				"orderby" => "",
+				"order" => "DESC",
+				"limit" => 25
+			);
+		$s = $options + $defaults; 
+		$operator = $s['operator'];
+		$cond = "";
+		if( !empty( $conditions ) ):
+			foreach( $conditions as $key => $value )
+				{
+					$value = $this->escape( $value ); 
+					$cond .= $key."='".$value."' ".$operator." "; 
+				}
+			$cond = rtrim( $cond , " ".$operator." ");
+		else:
+			$cond = 1;
+		endif;
+
+		if( !empty( $s['orderby'] ) ) :
+			$order_sett = "order by ". $s['orderby']. " ".$s['order']; 
+		else:
+			$order_sett = "";
+		endif; 
+
+		$query = $this->conn->query( "SELECT * FROM ".$table." WHERE ".$cond." ". $order_sett." LIMIT ".$s['limit'] );
+
+		$return = array();
+
+		while( $a = $query->fetch_object() )
+		{
+			$return[] = $a;
+		}
+		return $return;
+	}
+	public function query( $query = null ) {
+		$query = $this->conn->query( $query ); 
+		$result = array();
+		while( $a = $query->fetch_object )
+		{
+			$result[] = $a;
+		}
+		return $result;
 	}
 }
 ob_end_flush();

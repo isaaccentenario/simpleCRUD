@@ -1,0 +1,111 @@
+* {
+	border:0;
+	padding:0;
+	margin:0;
+	font-size: auto;
+	font-weight: normal;
+	text-decoration: none;
+}
+body {
+	font-family: Calibri,Arial,"sans-serif";
+	padding: 0;
+	margin: 0 ;
+	padding-top: 150px;
+}
+header {
+	background: #00CAC0;
+	margin:0;
+	padding: 20px;
+	box-shadow: 0 2px 2px #999;
+	position: fixed;
+	left: 0; top: 0;
+	width: 100%;
+}
+h1.title {
+	text-align: center;
+	font-size: 3em;
+	color: #fff;
+	margin: 0;
+	text-shadow: 0px 1px 1px #999;
+}
+h2.subtitle {
+	text-align: center;
+	font-size: 1.3em;
+	color: #fff;
+	margin: 0;
+	font-weight: normal;
+}
+.view-github {
+	border: 0;
+	background: #008080;
+	text-shadow: 0 -1 2px #222;
+	cursor: pointer;
+	padding: 15px 30px;
+	font-size: 1.1em;
+	color: #fff;
+	display: block;
+	margin: 15px auto;
+	transition: 0.2s ease-in-out;
+	border-radius: 5px;
+	border-bottom: 1px solid #fff;
+	box-shadow: 0 1px 2px #666;
+}
+.view-github:hover {
+	transition: 0.2s linear;
+	background: #fff;
+	border-bottom-color: #666;
+	color: #222;
+}
+.container {
+	width: 100%;
+	max-width: 900px;
+	margin: auto;
+}
+.container .point {
+	margin-bottom: 20px;
+	padding: 10px;
+}
+.container .point h3 {
+	font-size: 1.5em;
+	margin-bottom: 10px;
+}
+header .info {
+	float: left;
+	width: 60%;
+}
+header .another {
+	width: 40%;
+	float: right;
+}
+.container .point ul {
+	margin: 15px 35px;
+}
+.container .point ul li {
+	padding: 5px;
+	font-weight: lighter;
+}
+.container .point a{
+	text-decoration: none;
+	color: #444;
+	font-weight: bold;
+	text-align: center;
+	margin: 10px;
+	display: block;
+	cursor: pointer;
+}
+.container .point a:hover {
+	text-decoration: underline;
+}
+@media handheld, only screen and (max-width: 750px) {
+	header {
+		position: relative;
+	}
+	body {
+		padding-top: 0;
+	}
+	.info, .another {
+		width: 100% !important;
+		display: block;
+		float: none !important;
+	}
+}

@@ -1,0 +1,205 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<link rel="stylesheet" href="css/style.css" />
+	<link rel="stylesheet" href="css/prism.css" />
+	<meta charset="utf-8" />
+	<script src="js/jquery.js"></script>
+	<script src="js/prism.js"></script>
+	<title> My Simple CRUD </title>
+</head>
+<body>
+	<header>
+		<div class="container">
+			<span class='info anm'>
+				<h1 class="title"> SimpleCRUD PHP </h1>
+				<h2 class="subtitle"> A PHP class for simplify your CRUD operations with SQL </h2>
+			</span>
+			<span class="another anm">
+				<a target="_blank" href="https://github.com/isaaccentenario/simpleCRUD">
+					<button class="view-github"> View on GitHub </button>
+				</a>
+			</span>
+		</div>
+	</header>
+
+
+	<div class="container">
+		<div class="point introduction">
+			<h3> Introdução </h3>
+			<span> SimpleCRUD é uma classe criada para facilitar a vida dos programadores que usam PHP puro (inicialmente, mas pode ser integrado a outros tipos de projetos em PHP) em seus projetos. 
+			Com ela seus trabalhos com queries e dados SQL ficam muito mais fáceis e simples de serem feitos! Você não precisará mais usar SQL's dentro de seu código, a class faz a consulta por você
+		</div>
+
+		<div class="point">
+			<h3> Fazendo a conexão </h3>
+
+
+<pre><code class="language-php">&lt;?php
+	// supondo que você já tenha criado o banco de dados e todas as tabelas
+	require "simplecrud.class.php";	// chamamos a classe
+	//você pode testar se existe a class usando (include_once 'simplecrud.class.php') or die("<h1> Class SimpleCRUD not found :/ </h1>"); 
+	$host = 'localhost'; // host do banco de dados
+	$user = 'root'; // nome de usuário do banco de dados
+	$password = ""; // senha do banco de dados
+	$database = "simplecrud"; // nome do banco de dados
+	$instance = new simpleCRUD($host,$user,$password,$database); // chamamos a classe
+	$connect = $instance->connect(); // fazemos a conexão ao banco de dados
+	if( $instance->error() ) die("Erro ao conectar. Detalhes do erro: ".$instance->error()); 
+	// testamos a conexão. A função error() retorna os dados do erro
+?&gt;</code></pre>
+
+
+		</div>
+		<div class="point">
+			<h3> Inserindo dados </h3>
+			<span> Após feita a conexão, vamos inserir os dados usando a class. A configuração do array é feita usando a estrutura "coluna" => "valor para inserir na coluna"</span>
+
+<pre><code class="language-php">
+	// a configuração do array é feita usando a estrutura "coluna" => "valor para inserir na coluna"
+	$config = array(
+		"nome" => "nome do usuário (exemplo)",
+		"sobrenome" => "sobrenome do usuário (exemplo)",
+		"email" => "email@emaildousuario.com",
+	);
+	// inserindo no banco de dados usando a função
+	$insert = $instance->insert("nome da tabela", $config);
+	if( $insert ): //verificando a operação
+		echo "Dados inseridos com sucesso"; 
+	else:
+		echo "Erro ao inserir os dados - ".$instance->error();
+	endif;
+</code></pre>
+			<span> Simples, não? Essa é a ideia! Seu array de dados pode conter quantos campos você necessitar, desde que eles existam na tabela </span>
+
+		</div>
+		<div class="point">
+			<h3> Atualizando dados </h3>
+			<span> Agora é a hora de atualizar os dados do seu banco. O processo é semelhante ao anterior, só que desta vez adicionaremos alguns condicionais. </span>
+<pre><code class="language-php">
+	$new_values = array(
+		"nome" => "nome do usuário",
+		"sobrenome" => "sobrenome do usuário",
+		"email" => "email@outroemail.com",
+	);
+	// aqui vêm as condições
+	$conditions = array(
+		"nome" => "nome do usuário (exemplo)", 
+		// se houver um ou mais registros em que, na coluna "nome" tenham o valor "nome do usuário (exemplo)"...
+		"sobrenome" => "sobrenome do usuário (exemplo)",
+		// e um ou mais registros em que, "sobrenome" tenham o valor "sobrenome do usuário (exemplo)...
+	);
+	// ele atualiza, de $conditions para $new_values
+	$update = $instance->update("nome da tabela", $new_values, $conditions);
+	if( $update ): //verificando a operação
+		echo "Dados atualizados com sucesso"; 
+	else:
+		echo "Erro ao atualizar os dados - ".$instance->error();
+	endif;</code></pre>
+			<span> Entendeu? É Simples, o array "new_values" contém os novos dados que serão atualizados, e o array "$conditions" é o que contém as condições.
+			Por exemplo, o ID do usuário é 1, então você insere o $conditions como "id" => 1. 
+		</div>
+
+		<div class="point">
+			<h3> Deletando dados </h3>
+			<span> Mas, e para apagar dados? Fácil, o processo é semelhante, veja: </span>
+
+
+<pre><code class="language-php">
+// condicionais para exclusão
+$conditions = array(
+		"nome" => "nome do usuário (exemplo)",
+		"sobrenome" => "sobrenome do usuário (exemplo)",
+		"email" => "email@emaildousuario.com",
+	);
+	// deletando no banco de dados usando a função
+	$delete = $instance->delete("nome da tabela", $conditions);
+	if( $delete ): //verificando a operação
+		echo "Dados deletados com sucesso"; 
+	else:
+		echo "Erro ao deletar os dados - ".$instance->error();
+	endif;</code></pre>
+			<span> Se houver um registro que possua as características passadas em $conditions, a class executa a query e ela é excluída. 
+			Em um sistema de usuários, os condicionais seriam semelhantes a um "id" de usuário. Ex: $conditions = array("id"=>25);
+			</span>
+		</div>
+		<div class="point">
+			<h3> Pegando dados </h3>
+			<span> Ótimo, você já sabe como inserir, atualizar e apagar dados... Mas, e quanto a "pegar" dados? SimpleCRUD também faz isso! Veja: </span>
+
+<pre><code class="language-php">$conditions = array("id"=>15);
+$settings = array(
+	"operator" => "AND", // operador da query, "and" é padrão
+	"orderby" => "coluna", // ordem dos resultados, caso fique vazio, os resultados ficam por ordenação do próprio mysql, o padrão é vazio
+	"order" => "DESC", // tipo de ordenação: DESC ou ASC. Padrão "DESC"
+	"limit" => 25, // limite de resultados, o padrão é 25
+);
+$get = $instance->get("nome da tabela", $conditions, $settings); 
+// você pode pegar todos os dados usando apenas $instance->get("nome da tabela"), sem passar $conditions nem $settings. Isso não é legal? 
+// nesse caso, o padrão do limite é 25, você pode aumentar usando $settings("limit"=>50) por exemplo
+
+if( $get ): //se houverem resultados
+	foreach( $get as $result ): // para cada resultado, uma variável result é atribuida a ele
+		echo $result->nome_da_coluna;
+	endforeach;
+else: //se não...
+	echo "Não foram encontrados registros"; 
+endif;
+</code></pre>
+
+
+		</div>
+		<div class="point">
+			<h3> Queries Personalizadas </h3>
+			<span> Ótimo, mas ainda não atende todas as minhas necessidades, preciso fazer uma querie customizada! Você pode!! </span>
+
+<pre><code class="language-php">$query = $instance->query("SELECT * FROM tabela");
+if( $get ): //se houverem resultados
+	foreach( $get as $result ): // para cada resultado, uma variável result é atribuida a ele
+		echo $result->nome_da_coluna;
+	endforeach;
+else: //se não...
+	echo "Não foram encontrados registros"; 
+endif;
+</code></pre>
+			<span> Caso você precise usar uma ou mais variáveis dentro da query, utilize o método escape() da classe para escapar as strings e impedir o ataque por sql injection </span>
+
+<pre><code class="language-php">$string = "string a escapar' or 1=1;"; // string insegura, contém código sql injection
+$string = $instance->escape($string); // retorna "string a escapar\' or 1=1;"
+$query = $instance->query("SELECT * FROM tabela WHERE coluna='$string'"); // query protegida
+</code></pre>
+			
+		</div>
+		<div class="point">
+			<h3> Segurança</h3>
+			<span>
+				Quanto a segurança, SimpleCRUD é protegida contra SQL injection. Todos os valores nos métodos são "limpas" com o método escape() dentro do próprio código! Então você não precisa se preocupar em limpar suas strings contra ataques, nossa class faz isso pra você!
+			</span> 
+		</div>
+		<div class="point">
+			<h3> Resumo dos Métodos </h3>
+			<span> Aqui vai uma lista rápida de todos os métodos que SimpleCRUD possui </span>
+
+			<ul>
+				<li> connect() - Após a chamada da class, deve se chamar essa função para que ela conecte o código ao banco de dados. Retorna true ou false </li>
+				<li> error() - Retorna erros na conexão, código de erros ou descrição de erros em queries </li>
+				<li> escape($string) - Retorna a versão segura de $string para ser usada em uma query, por exemplo </li>
+				<li> insert($table,$values) - Insere o array $values na tabela $table. Retorna true ou false </li>
+				<li> update($table,$values,$conditions) - Atualiza o registro resultado do array $conditions, da tabela $table para $values. Retorna true ou false </li>
+				<li> delete($table,$conditions) - Apaga o registro resultado do array $conditions, da tabela $table. Retorna true ou false </li>
+				<li> get($table,$conditions,$options) - Pega os registros de $table quando forem iguais aos valores de $conditions. $options são as configurações da query. Retorna um array de objetos.</li>
+				<li> query($query) - Faz uma query customizada inserida em $query. Retorna um array de objetos </li>
+			</ul>
+		</div>
+		<div class="point">
+			<h3> Finalizações </h3>
+			<span> Está ai, mais uma das classes feitas para simplificar sua vida. Compartilhe nosso projeto! </span>
+			<span> Criado por Isaac Bruno </span>
+			<p><a href="http://facebook.com/isaac.centenario" target="_blank"> Facebook do Desenvolvedor </a></p>
+			<p><a href="https://github.com/isaaccentenario/simpleCRUD" target="_blank"> Projeto no GitHub </a></p>
+
+			<p><a> isaac.centenario@gmail.com / @outlook.com </a></p>
+		</div>
+	</div>
+</body>
+</html>
