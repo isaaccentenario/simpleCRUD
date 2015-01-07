@@ -20,7 +20,7 @@ class simpleCRUD {
 	protected $user;
 	protected $password;
 	protected $db;
-	protected $conn;
+	public $conn;
 	public $error_detail;
 
 	public function __construct($host=null,$user=null,$password=null,$db=null) {
@@ -189,10 +189,11 @@ class simpleCRUD {
 		}
 		return $return;
 	}
+
 	public function query( $query = null ) {
 		$query = $this->conn->query( $query ); 
 		$result = array();
-		while( $a = $query->fetch_object )
+		while( $a = $query->fetch_object() )
 		{
 			$result[] = $a;
 		}
